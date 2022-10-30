@@ -1,0 +1,11 @@
+*.docx
+
+// java and InelliJ IDEA production files
+.idea/*
+out/*
+*.iml
+*.class
+*.jar
+
+// macOS tech files
+*.DS_STORE
