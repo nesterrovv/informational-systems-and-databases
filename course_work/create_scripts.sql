@@ -1,6 +1,6 @@
 CREATE TYPE DIMENSIONS AS ENUM ('S', 'M', 'L', 'XL');
-CREATE TYPE GOOD_STATUS AS ENUM ('WAITING', 'DELIEVERING', 'DELIEVERED', 'LOST', 'DESTROYED');
-CREATE TYPE ORDER_STATUS AS ENUM ('WAITING', 'DELIEVERING', 'DELIEVERED', 'LOST', 'DESTROYED');
+CREATE TYPE GOOD_STATUS AS ENUM ('WAITING', 'DELIVERING', 'DELIVERED', 'LOST', 'DESTROYED');
+CREATE TYPE ORDER_STATUS AS ENUM ('WAITING', 'DELIVERING', 'DELIVERED', 'LOST', 'DESTROYED');
 
 
 CREATE TABLE IF NOT EXISTS customer (
@@ -10,12 +10,19 @@ CREATE TABLE IF NOT EXISTS customer (
     surname VARCHAR(50) NOT NULL
 );
 
+CREATE TABLE  IF NOT EXISTS order (
+    order_id SERIAL PRIMARY KEY,
+    customer_id INTEGER REFERENCES customer(customer_id) NOT NULL,
+    departure_point_id INTEGER REFERENCES location(location_id) NOT NULL,
+    destination_point_id INTEGER REFERENCES location(location_id) NOT NULL,
+    status ORDER_STATUS,
+    description VARCHAR(256)
+);
+
 CREATE TABLE IF NOT EXISTS request (
     request_id SERIAL PRIMARY KEY,
     customer_id INTEGER REFERENCES customer(customer_id)
     description VARCHAR(512),
-    departure_point_id INTEGER REFERENCES location(location_id) NOT NULL,
-    destination_point_id INTEGER REFERENCES location(location_id) NOT NULL,
     length REAL NOT NULL CHECK(length > 0),
     width REAL NOT NULL CHECK(width > 0),
     height REAL NOT NULL CHECK(height > 0)
@@ -42,11 +49,6 @@ CREATE TABLE IF NOT EXISTS good (
     request_id INTEGER REFERENCES request(request_id) ON DELETE CASCADE
 );
 
-CREATE TABLE  IF NOT EXISTS order (
-    order_id SERIAL PRIMARY KEY,
-    status ORDER_STATUS,
-    description VARCHAR(256)
-);
 
 CREATE TABLE IF NOT EXISTS order_good (
     order_id INTEGER REFERENCES order(order_id),
@@ -66,6 +68,11 @@ CREATE TABLE IF NOT EXISTS courier_order (
     order_id INTEGER REFERENCES order(order_id),
     PRIMARY KEY(courier_id, order_id)
 );
+
+-- Комплексные ограничения целостности: --
+-- В одном заказе не должно быть больше 10 товаров --
+-- Курьеры с рейтингом ниже 3,5 не могут доставлять хрупкий груз --
+
 
 -- Процедуры: --
 
