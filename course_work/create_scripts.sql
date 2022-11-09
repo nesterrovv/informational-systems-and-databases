@@ -1,7 +1,7 @@
 CREATE TYPE DIMENSIONS AS ENUM ('S', 'M', 'L', 'XL');
 CREATE TYPE GOOD_STATUS AS ENUM ('WAITING', 'DELIVERING', 'DELIVERED', 'LOST', 'DESTROYED');
 CREATE TYPE ORDER_STATUS AS ENUM ('WAITING', 'DELIVERING', 'DELIVERED', 'LOST', 'DESTROYED');
-
+CREATE TYPE EXTRA_CONDITION AS ENUM ('FRAGILE', $$DON'T IMMERSE$$, $$DON'T SHAKE$$);
 
 CREATE TABLE IF NOT EXISTS customer (
     customer_id SERIAL PRIMARY KEY,
@@ -10,7 +10,12 @@ CREATE TABLE IF NOT EXISTS customer (
     surname VARCHAR(50) NOT NULL
 );
 
-CREATE TABLE  IF NOT EXISTS order (
+CREATE TABLE IF NOT EXISTS location (
+    location_id SERIAL PRIMARY KEY,
+    name VARCHAR(50) UNIQUE NOT NULL
+);
+
+CREATE TABLE  IF NOT EXISTS ordering (
     order_id SERIAL PRIMARY KEY,
     customer_id INTEGER REFERENCES customer(customer_id) NOT NULL,
     departure_point_id INTEGER REFERENCES location(location_id) NOT NULL,
@@ -21,64 +26,51 @@ CREATE TABLE  IF NOT EXISTS order (
 
 CREATE TABLE IF NOT EXISTS request (
     request_id SERIAL PRIMARY KEY,
-    customer_id INTEGER REFERENCES customer(customer_id)
+    order_id INTEGER REFERENCES ordering(order_id) NOT NULL,
     description VARCHAR(512),
+    weight REAL NOT NULL CHECK(weight > 0),
     length REAL NOT NULL CHECK(length > 0),
     width REAL NOT NULL CHECK(width > 0),
     height REAL NOT NULL CHECK(height > 0)
 );
 
--- -- WEAK ENTITY TO CONNECT USER AND USER REQUEST --
--- CREATE TABLE IF NOT EXISTS customer_request (
---     customer_id INTEGER REFERENCES ON DELETE CASCADE customer(customer_id),
---     request_id INTEGER REFERENCES ON DELETE CASCADE request(request_id),
---     PRIMARY KEY(customer_id, request_id)
--- );
-
-CREATE TABLE IF NOT EXISTS location (
-    location_id SERIAL PRIMARY KEY,
-    name VARCHAR(50) UNIQUE NOT NULL
+CREATE TABLE IF NOT EXISTS request_condition (
+    request_id INTEGER REFERENCES request(request_id) ON DELETE CASCADE NOT NULL,
+    condition EXTRA_CONDITION NOT NULL,
+    PRIMARY KEY(request_id, condition)
 );
+
 
 CREATE TABLE IF NOT EXISTS good (
     good_id SERIAL PRIMARY KEY,
-    description VARCHAR(128),
-    weight REAL NOT NULL CHECK(weigh > 0),
     status GOOD_STATUS NOT NULL,
     dimensions dimensions,
     request_id INTEGER REFERENCES request(request_id) ON DELETE CASCADE
-);
+    );
 
-
-CREATE TABLE IF NOT EXISTS order_good (
-    order_id INTEGER REFERENCES order(order_id),
-    good_id INTEGER REFERENCES good(good_id),
-    PRIMARY KEY(order_id, good_id)
-);
 
 CREATE TABLE IF NOT EXISTS courier (
-    customer_id SERIAL PRIMARY KEY,
-    name VARCHAR(50),
+    courier_id SERIAL PRIMARY KEY,
+    name VARCHAR(50) NOT NULL,
+    surname VARCHAR(50) NOT NULL,
     rating REAL NOT NULL CHECK(rating > 0), 
     balance INTEGER NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS courier_order (
     courier_id INTEGER REFERENCES courier(courier_id),
-    order_id INTEGER REFERENCES order(order_id),
+    order_id INTEGER REFERENCES ordering(order_id),
     PRIMARY KEY(courier_id, order_id)
 );
 
 -- Комплексные ограничения целостности: --
 -- В одном заказе не должно быть больше 10 товаров --
--- Курьеры с рейтингом ниже 3,5 не могут доставлять хрупкий груз --
+-- Курьеры с рейтингом ниже 3,5 не могут доставлять грузы с дополнительными условиями --
 
 
 -- Процедуры: --
 
 -- №1 Определение размера на основе габаритова --
-
-CREATE OR REPLACE FUNCTION 
 -- №2 Изменение рейтинга и баланса курьера на основе изменения статуса заказа --
 
 -- Часто используемые операции: --
