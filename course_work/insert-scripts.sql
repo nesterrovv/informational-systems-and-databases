@@ -19,20 +19,20 @@ INSERT INTO location (name) VALUES
 ('Lake Knot City');
 
 INSERT INTO ordering (customer_id, departure_point_id, destination_point_id) VALUES
-(1, 'Capital Knot City', 'Central Knot City'),
-(1, 'Mountain Knot City', 'Middle Knot City'),
-(2, 'Port Knot City', 'Capital Knot City'),
-(5, 'Capital Knot City', 'South Knot City'),
-(6, 'Edge Knot City', 'Lake Knot City'),
-(3, 'Capital Knot City', 'Central Knot City');
+(1, 1, 2),
+(1, 4, 3),
+(2, 5, 1),
+(5, 1, 6),
+(6, 7, 8),
+(3, 1, 2);
 
 INSERT INTO request (order_id, description, weight, length, width, height) VALUES
-(1, "Present for my dad",20.0, 35.2, 17.4, 5.5),
-(2, "Some important documents", 6.0, 5.2, 2.4, 1.5),
-(3, "Set of fragile tableware",2.0, 7.2, 8.4, 1.5),
-(4, "Big black plastic packet",16.5, 17.3, 18.7, 0.9),
-(5, "Box of dry ice",15.0, 15.0, 15.0, 15.0),
-(6, "Stack of pizza's",3.0, 8.4, 9.2, 0.5);
+(1, 'Present for my dad',20.0, 35.2, 17.4, 5.5),
+(2, 'Some important documents', 6.0, 5.2, 2.4, 1.5),
+(3, 'Set of fragile tableware',2.0, 7.2, 8.4, 1.5),
+(4, 'Big black plastic packet',16.5, 17.3, 18.7, 0.9),
+(5, 'Box of dry ice',15.0, 15.0, 15.0, 15.0),
+(6, 'Stack of pizza',3.0, 8.4, 9.2, 0.5);
 
 
 
@@ -44,7 +44,7 @@ INSERT INTO request_condition (request_id, condition) VALUES
 (6, $$DON'T SHAKE$$);
 
 INSERT INTO courier (name, surname, rating, balance) VALUES
-("Egor", "Stukov", 4.92, 99000),
-("Ivan", "Nesterov", 4.92, 99000);
+('Egor', 'Stukov', 4.92, 99000),
+('Ivan', 'Nesterov', 4.92, 99000);
 
 
