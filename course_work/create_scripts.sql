@@ -28,10 +28,10 @@ CREATE TABLE IF NOT EXISTS request (
     request_id SERIAL PRIMARY KEY,
     order_id INTEGER REFERENCES ordering(order_id) NOT NULL,
     description VARCHAR(512),
-    weight REAL NOT NULL CHECK(weight > 0),
-    length REAL NOT NULL CHECK(length > 0),
-    width REAL NOT NULL CHECK(width > 0),
-    height REAL NOT NULL CHECK(height > 0)
+    weight REAL NOT NULL CHECK(weight > 0 AND weight < 150),
+    length REAL NOT NULL CHECK(length > 0 AND length <= 70),
+    width REAL NOT NULL CHECK(width > 0 AND width <= 70),
+    height REAL NOT NULL CHECK(height > 0 AND height <= 70)
 );
 
 CREATE TABLE IF NOT EXISTS request_condition (
@@ -64,13 +64,13 @@ CREATE TABLE IF NOT EXISTS courier_order (
 );
 
 -- Комплексные ограничения целостности: --
--- В одном заказе не должно быть больше 10 товаров --
+-- Один заказ не может весить в сумме больше 150 кг  --
 -- Курьеры с рейтингом ниже 3,5 не могут доставлять грузы с дополнительными условиями --
 
 
 -- Процедуры: --
 
--- №1 Определение размера на основе габаритова --
+-- №1 Определение размера на основе габаритова DONE --
 -- №2 Изменение рейтинга и баланса курьера на основе изменения статуса заказа --
 
 -- Часто используемые операции: --
