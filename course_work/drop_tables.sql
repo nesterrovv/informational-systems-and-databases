@@ -1,10 +1,10 @@
-DROP TABLE customer;
-DROP TABLE location;
-DROP TABLE ordering;
-DROP TABLE request;
+DROP TABLE customer CASCADE;
+DROP TABLE location CASCADE;
+DROP TABLE ordering CASCADE;
+DROP TABLE request CASCADE;
 DROP TABLE request_condition;
 DROP TABLE good;
-DROP TABLE courier;
+DROP TABLE courier CASCADE;
 DROP TABLE courier_order;
 DROP TYPE dimensions;
 DROP TYPE good_status;
