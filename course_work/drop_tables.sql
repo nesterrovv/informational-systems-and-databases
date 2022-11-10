@@ -1,0 +1,12 @@
+DROP TABLE customer;
+DROP TABLE location;
+DROP TABLE ordering;
+DROP TABLE request;
+DROP TABLE request_condition;
+DROP TABLE good;
+DROP TABLE courier;
+DROP TABLE courier_order;
+DROP TYPE dimensions;
+DROP TYPE good_status;
+DROP TYPE order_status;
+DROP TYPE extra_condition;
