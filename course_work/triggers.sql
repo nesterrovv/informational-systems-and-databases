@@ -1,3 +1,23 @@
+-- CHECK TOTAL ORDER WEIGHT
+CREATE OR REPLACE FUNCTION check_total_order_weight()
+    RETURNS TRIGGER
+    LANGUAGE PLPGSQL
+    AS
+$$
+DECLARE
+    total_weight REAL;
+BEGIN
+    total_weight := (SELECT SUM(weight)
+                     FROM request
+                     WHERE order_id = NEW.order_id);
+    IF (total_weight + NEW.weight > 150) THEN
+        RETURN NULL;
+    ELSE
+        RETURN NEW;
+    end if;
+END;
+$$;
+
 -- DETERMINE DIMENSIONS FUNCTION --
 CREATE OR REPLACE FUNCTION determine_dimensions(width REAL, height REAL, length REAL)
     RETURNS DIMENSIONS
@@ -29,12 +49,22 @@ CREATE OR REPLACE FUNCTION create_good_from_request()
 $$
 DECLARE
     dimension dimensions;
-    count     INTEGER;
 BEGIN
     dimension := determine_dimensions(NEW.width, NEW.height, NEW.length);
-    INSERT INTO good(status, dimensions, request_id)
-    VALUES ('WAITING', dimension, NEW.request_id);
-    RETURN NEW;
+    IF TG_OP = 'INSERT' THEN
+        BEGIN
+            INSERT INTO good(status, dimensions, request_id)
+            VALUES ('WAITING', dimension, NEW.request_id);
+            RETURN NEW;
+        END;
+    ELSIF TG_OP = 'UPDATE' THEN
+        BEGIN
+            UPDATE good
+            SET good.dimensions = dimension
+            WHERE good_id = NEW.good_id;
+            RETURN NEW;
+        END;
+    END IF;
 END;
 $$
     LANGUAGE PLPGSQL;
@@ -46,24 +76,6 @@ CREATE TRIGGER create_good_from_request_trigger
     FOR EACH ROW
 EXECUTE PROCEDURE create_good_from_request();
 
--- CHECK TOTAL ORDER WEIGHT
-CREATE OR REPLACE FUNCTION check_total_order_weight()
-    RETURNS TRIGGER AS
-$$
-DECLARE
-    total_weight REAL;
-BEGIN
-    total_weight := (SELECT SUM(weight)
-                     FROM request
-                     WHERE order_id = NEW.order_id);
-    IF (total_weight + NEW.weight > 150) THEN
-        RETURN NULL;
-    ELSE
-        RETURN NEW;
-    end if;
-END;
-$$
-    LANGUAGE PLPGSQL;
 
 CREATE TRIGGER check_total_order_weight_trigger
     BEFORE INSERT OR UPDATE
@@ -128,9 +140,17 @@ BEGIN
             UPDATE ordering
             SET status = 'DELIVERING'
             WHERE order_id = NEW.order_id;
+
+            UPDATE good
+            SET status = 'DELIVERING'
+            WHERE status = 'WAITING'
+              AND request_id IN (SELECT request_id
+                                 FROM request
+                                 WHERE order_id = NEW.order_id);
+
             RETURN NEW;
         END;
-        ELSE
+    ELSE
         BEGIN
             RAISE NOTICE 'Courier with id % is incompatible to get order %', NEW.courier_id, NEW.order_id;
             RETURN NULL;
@@ -141,6 +161,6 @@ $$;
 
 CREATE TRIGGER assign_order_to_courier_trigger
     BEFORE INSERT OR UPDATE
-ON courier_order
-FOR EACH ROW
+    ON courier_order
+    FOR EACH ROW
 EXECUTE PROCEDURE assign_order_to_courier();
