@@ -52,23 +52,95 @@ CREATE OR REPLACE FUNCTION check_total_order_weight()
 $$
 DECLARE
     total_weight REAL;
---     order_id INTEGER;
 BEGIN
---     order_id := NEW.order_id;
     total_weight := (SELECT SUM(weight)
                      FROM request
                      WHERE order_id = NEW.order_id);
     IF (total_weight + NEW.weight > 150) THEN
         RETURN NULL;
-        ELSE
+    ELSE
         RETURN NEW;
     end if;
 END;
 $$
-LANGUAGE PLPGSQL;
+    LANGUAGE PLPGSQL;
 
 CREATE TRIGGER check_total_order_weight_trigger
-    AFTER INSERT
+    BEFORE INSERT OR UPDATE
     ON request
     FOR EACH ROW
 EXECUTE PROCEDURE check_total_order_weight();
+
+CREATE OR REPLACE FUNCTION check_extra_conditions(order_id INTEGER)
+    RETURNS BOOLEAN
+    LANGUAGE PLPGSQL
+AS
+$$
+DECLARE
+    extra_cond_count INTEGER;
+BEGIN
+    extra_cond_count :=
+            (SELECT COUNT(condition)
+             FROM request
+                      INNER JOIN request_condition USING (request_id)
+             WHERE request.order_id = order_id);
+    IF extra_cond_count > 0 THEN
+        RETURN TRUE;
+    ELSE
+        RETURN TRUE;
+    end if;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION is_courier_compatible(courier_id INTEGER, order_id INTEGER)
+    RETURNS BOOLEAN
+    LANGUAGE PLPGSQL
+AS
+$$
+DECLARE
+    courier_rating REAL;
+BEGIN
+    courier_rating := (SELECT rating
+                       FROM courier
+                       WHERE courier.courier_id = courier_id);
+    IF courier_rating < 3.5 THEN
+        BEGIN
+            IF check_extra_conditions(order_id) THEN
+                RETURN FALSE;
+            ELSE
+                RETURN TRUE;
+            END IF;
+        END;
+    ELSE
+        RETURN TRUE;
+    END IF;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION assign_order_to_courier()
+    RETURNS TRIGGER
+    LANGUAGE PLPGSQL
+AS
+$$
+BEGIN
+    IF is_courier_compatible(NEW.courier_id, NEW.order_id) THEN
+        BEGIN
+            UPDATE ordering
+            SET status = 'DELIVERING'
+            WHERE order_id = NEW.order_id;
+            RETURN NEW;
+        END;
+        ELSE
+        BEGIN
+            RAISE NOTICE 'Courier with id % is incompatible to get order %', NEW.courier_id, NEW.order_id;
+            RETURN NULL;
+        END;
+    END IF;
+END;
+$$;
+
+CREATE TRIGGER assign_order_to_courier_trigger
+    BEFORE INSERT OR UPDATE
+ON courier_order
+FOR EACH ROW
+EXECUTE PROCEDURE assign_order_to_courier();
