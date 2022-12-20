@@ -3,7 +3,7 @@ CREATE OR REPLACE FUNCTION check_total_order_weight()
     RETURNS TRIGGER
     LANGUAGE PLPGSQL
     AS
-$$
+'
 DECLARE
     total_weight REAL;
 BEGIN
@@ -16,14 +16,14 @@ BEGIN
         RETURN NEW;
     end if;
 END;
-$$;
+';
 
 -- DETERMINE DIMENSIONS FUNCTION --
 CREATE OR REPLACE FUNCTION determine_dimensions(width REAL, height REAL, length REAL)
     RETURNS DIMENSIONS
     LANGUAGE PLPGSQL
 AS
-$$
+'
 DECLARE
     greatest_dimension REAL;
     result             DIMENSIONS;
@@ -31,33 +31,33 @@ BEGIN
     greatest_dimension := GREATEST(width, height);
     greatest_dimension := GREATEST(greatest_dimension, length);
     IF greatest_dimension < 20 THEN
-        result := 'S';
+        result := ''S'';
     ELSIF greatest_dimension < 35 THEN
-        result := 'M';
+        result := ''M'';
     ELSIF greatest_dimension < 55 THEN
-        result := 'L';
+        result := ''L'';
     ELSE
-        result := 'XL';
+        result := ''XL'';
     END IF;
     RETURN result;
 END;
-$$;
+';
 
 -- INSERT GOOD BY REQUEST  --
 CREATE OR REPLACE FUNCTION create_good_from_request()
     RETURNS TRIGGER AS
-$$
+'
 DECLARE
     dimension dimensions;
 BEGIN
     dimension := determine_dimensions(NEW.width, NEW.height, NEW.length);
-    IF TG_OP = 'INSERT' THEN
+    IF TG_OP = ''INSERT'' THEN
         BEGIN
             INSERT INTO good(status, dimensions, request_id)
-            VALUES ('WAITING', dimension, NEW.request_id);
+            VALUES (''WAITING'', dimension, NEW.request_id);
             RETURN NEW;
         END;
-    ELSIF TG_OP = 'UPDATE' THEN
+    ELSIF TG_OP = ''UPDATE'' THEN
         BEGIN
             UPDATE good
             SET good.dimensions = dimension
@@ -66,7 +66,7 @@ BEGIN
         END;
     END IF;
 END;
-$$
+'
     LANGUAGE PLPGSQL;
 
 -- TRIGGER TO CREATE GOOD
@@ -87,7 +87,7 @@ CREATE OR REPLACE FUNCTION check_extra_conditions(order_id INTEGER)
     RETURNS BOOLEAN
     LANGUAGE PLPGSQL
 AS
-$$
+'
 DECLARE
     extra_cond_count INTEGER;
 BEGIN
@@ -102,13 +102,13 @@ BEGIN
         RETURN TRUE;
     end if;
 END;
-$$;
+';
 
 CREATE OR REPLACE FUNCTION is_courier_compatible(courier_id INTEGER, order_id INTEGER)
     RETURNS BOOLEAN
     LANGUAGE PLPGSQL
 AS
-$$
+'
 DECLARE
     courier_rating REAL;
 BEGIN
@@ -127,23 +127,23 @@ BEGIN
         RETURN TRUE;
     END IF;
 END;
-$$;
+';
 
 CREATE OR REPLACE FUNCTION assign_order_to_courier()
     RETURNS TRIGGER
     LANGUAGE PLPGSQL
 AS
-$$
+'
 BEGIN
     IF is_courier_compatible(NEW.courier_id, NEW.order_id) THEN
         BEGIN
             UPDATE ordering
-            SET status = 'DELIVERING'
+            SET status = "DELIVERING"
             WHERE order_id = NEW.order_id;
 
             UPDATE good
-            SET status = 'DELIVERING'
-            WHERE status = 'WAITING'
+            SET status = "DELIVERING"
+            WHERE status = "WAITING"
               AND request_id IN (SELECT request_id
                                  FROM request
                                  WHERE order_id = NEW.order_id);
@@ -152,12 +152,12 @@ BEGIN
         END;
     ELSE
         BEGIN
-            RAISE NOTICE 'Courier with id % is incompatible to get order %', NEW.courier_id, NEW.order_id;
+            RAISE NOTICE ''Courier with id % is incompatible to get order %'', NEW.courier_id, NEW.order_id;
             RETURN NULL;
         END;
     END IF;
 END;
-$$;
+';
 
 CREATE TRIGGER assign_order_to_courier_trigger
     BEFORE INSERT OR UPDATE

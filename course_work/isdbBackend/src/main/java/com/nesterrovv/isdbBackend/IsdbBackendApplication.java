@@ -28,11 +28,11 @@ public class IsdbBackendApplication {
 		dataSource.setUrl("jdbc:postgresql://localhost:5430/studs");
 		dataSource.setUsername("s312621");
 		dataSource.setPassword("my_password_is_not_your_business");
-
 		// schema init
 		Resource initSchema = new ClassPathResource("sql_scripts/create_scripts.sql");
+		Resource initTriggers = new ClassPathResource("sql_scripts/triggers.sql");
 		Resource initData = new ClassPathResource("sql_scripts/insert_scripts.sql");
-		DatabasePopulator databasePopulator = new ResourceDatabasePopulator(initSchema, initData);
+		DatabasePopulator databasePopulator = new ResourceDatabasePopulator(initSchema, initTriggers, initData);
 		DatabasePopulatorUtils.execute(databasePopulator, dataSource);
 		return dataSource;
 	}
