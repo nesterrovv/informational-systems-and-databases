@@ -13,6 +13,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Properties;
+
 @SpringBootApplication
 @RestController
 public class IsdbBackendApplication {
@@ -22,13 +26,17 @@ public class IsdbBackendApplication {
 	}
 
 	@Bean(name = "dataSource")
-	public DriverManagerDataSource dataSource() {
+	public DriverManagerDataSource dataSource() throws IOException {
+		InputStream inputStreamForProperties = this.getClass().getClassLoader()
+				.getResourceAsStream("authorization.properties");
+		Properties authorizationProperties = System.getProperties();
+		authorizationProperties.load(inputStreamForProperties);
 		DriverManagerDataSource dataSource = new DriverManagerDataSource();
 		dataSource.setDriverClassName("org.postgresql.Driver");
-		dataSource.setUrl("jdbc:postgresql://localhost:5430/studs");
-		dataSource.setUsername("s312621");
-		dataSource.setPassword("my_password_is_not_your_business");
-		// schema init
+		dataSource.setUrl(authorizationProperties.getProperty("database_url"));
+		dataSource.setUsername(authorizationProperties.getProperty("database_login"));
+		dataSource.setPassword(authorizationProperties.getProperty("database_password"));
+		//schema init
 		Resource initSchema = new ClassPathResource("sql_scripts/create_scripts.sql");
 		Resource initTriggers = new ClassPathResource("sql_scripts/triggers.sql");
 		Resource initData = new ClassPathResource("sql_scripts/insert_scripts.sql");
