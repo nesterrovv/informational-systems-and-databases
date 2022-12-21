@@ -6,9 +6,7 @@ const CustomerGood = props => {
     return (
         <React.Fragment>
             <div className="card h-100">
-                <h2 className="card-title">
-                    <StatusLabel status={props.good_status}></StatusLabel>
-                </h2>
+                <StatusLabel status={props.good_status}></StatusLabel>
                 <p>
                     {props.description}
                 </p>
