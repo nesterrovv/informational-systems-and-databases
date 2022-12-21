@@ -28,5 +28,9 @@ public class Courier {
     double rating;
     @Column
     double balance;
+    @Column(nullable = false)
+    private String username;
+    @Column(nullable = false)
+    private String password;
 
 }

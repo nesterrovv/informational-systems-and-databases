@@ -23,5 +23,7 @@ public class Good {
     Dimension dimensions;
     @Column
     Integer request_id;
+    @Column
+    Integer courier_id;
 
 }
