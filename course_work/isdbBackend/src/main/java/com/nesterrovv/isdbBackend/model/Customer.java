@@ -1,25 +1,27 @@
-package com.nesterrovv.isdbBackend.entities;
+package com.nesterrovv.isdbBackend.model;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Accessors(chain = true)
 @Entity
 @Data
-public class Location {
+@Table(name = "customer")
+public class Customer {
 
     @Id
     @Column
     @GenericGenerator(name = "generator", strategy = "increment")
     @GeneratedValue(generator = "generator")
-    Integer location_id;
+    Integer customer_id;
     @Column
-    String nane;
+    String login;
+    @Column
+    String name;
+    @Column
+    String surname;
 
 }

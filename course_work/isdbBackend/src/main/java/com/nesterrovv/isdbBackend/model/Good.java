@@ -1,31 +1,27 @@
-package com.nesterrovv.isdbBackend.entities;
+package com.nesterrovv.isdbBackend.model;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Accessors(chain = true)
 @Entity
 @Data
-public class Courier {
+@Table(name = "good")
+public class Good {
 
     @Id
     @Column
     @GenericGenerator(name = "generator", strategy = "increment")
     @GeneratedValue(generator = "generator")
-    Integer courier_id;
+    Integer good_id;
     @Column
-    String name;
+    GoodStatus status;
     @Column
-    String surname;
+    Dimension dimensions;
     @Column
-    double rating;
-    @Column
-    double balance;
+    Integer request_id;
 
 }

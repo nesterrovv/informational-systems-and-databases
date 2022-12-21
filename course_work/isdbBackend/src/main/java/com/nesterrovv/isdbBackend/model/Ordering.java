@@ -1,17 +1,15 @@
-package com.nesterrovv.isdbBackend.entities;
+package com.nesterrovv.isdbBackend.model;
 
 import lombok.Data;
 import lombok.experimental.Accessors;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
+import javax.persistence.*;
 
 @Accessors(chain = true)
 @Entity
 @Data
+@Table(name = "ordering")
 public class Ordering {
 
     @Id

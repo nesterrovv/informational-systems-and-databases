@@ -1,4 +1,4 @@
-package com.nesterrovv.isdbBackend.entities;
+package com.nesterrovv.isdbBackend.model;
 
 public enum OrderStatus {
     WAITING,
