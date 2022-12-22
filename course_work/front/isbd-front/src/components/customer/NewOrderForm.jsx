@@ -9,6 +9,7 @@ function NewOrderForm() {
     const [departure, setDeparture] = useState('');
     const [destination, setDestination] = useState('');
     const [description, setDescription] = useState('');
+    const [stateGoods, setGoods] = useState([]);
     const getCities = () => {
         //TODO: make ajax to server, get json of cities, setState()
     }
@@ -30,26 +31,25 @@ function NewOrderForm() {
     }
 
     const handleAddGood = (event) => {
-        // let goods = [...this.state.goods];
-        // let newGood = {}
-        // goods.push(newGood);
-        // this.setState({goods: goods});
         dispatch({type: "ADD_GOOD"});
-
-        console.log(goods);
+        console.log("goods", goods);
+        setGoods([...goods]);
+        console.log("stateGoods", stateGoods);
     }
 
     const handleSubmit = event => {
-        console.log(this.state);
+        console.log(departure, destination, description, stateGoods);
         event.preventDefault();
     }
 
     const renderGoods = () => {
-        const goodList = goods.map(
+        console.log("renderGoods: ", goods);
+        const goodsRenderList =  stateGoods.map(
             good => (
-                <div></div>
+                <div>{good.id}</div>
             )
-        )
+        );
+        return goodsRenderList;
     }
 
     return (
@@ -101,7 +101,14 @@ function NewOrderForm() {
                 </div>
 
                 <div className="content bg-dark p-20 m-0 mb-20">
-
+                    {/*{renderGoods}*/}
+                    <ul>
+                        {stateGoods.map(
+                            good => (
+                                <li key={good.id}>{good.id}</li>
+                            )
+                        )}
+                    </ul>
                     <button className="btn btn-primary" type="button" onClick={handleAddGood}>Add good</button>
                 </div>
 
