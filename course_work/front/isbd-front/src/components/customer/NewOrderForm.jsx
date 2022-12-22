@@ -1,10 +1,11 @@
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
+import GoodFormListElement from "./GoodFormListElement";
 
 function NewOrderForm() {
 
     const dispatch = useDispatch();
-    const goods = useSelector(state => state.goods.goods);
+    let goods = useSelector(state => state.goods.goods);
 
     const [departure, setDeparture] = useState('');
     const [destination, setDestination] = useState('');
@@ -37,8 +38,27 @@ function NewOrderForm() {
         console.log("stateGoods", stateGoods);
     }
 
+    const updateGoodList = (event) => {
+        setGoods([...goods]);
+    }
+
     const handleSubmit = event => {
-        console.log(departure, destination, description, stateGoods);
+        let order = {
+            departure: departure,
+            destination: destination,
+            description: description,
+            goods: []
+        }
+        goods.forEach(good => {
+            order.goods.push({
+                length: good.length,
+                width: good.width,
+                height: good.height,
+                weight: good.weight,
+                description: good.description
+            })
+        })
+        console.log("Order: ", order);
         event.preventDefault();
     }
 
@@ -67,10 +87,14 @@ function NewOrderForm() {
                                     onChange={handleDepartureChange}>
                                 <option value="" selected="selected" disabled="disabled">From city:
                                 </option>
-                                <option value="front-end">Capital Knot City</option>
-                                <option value="back-end">South Knot City</option>
-                                <option value="full-stack">West Knot City</option>
-                                {/*    {getCities}*/}
+                                <option value="Capital Knot City">Capital Knot City</option>
+                                <option value="Central Knot City">Central Knot City</option>
+                                <option value="Middle Knot City">Middle Knot City</option>
+                                <option value="Mountain Knot City">Mountain Knot City</option>
+                                <option value="Port Knot City">Port Knot City</option>
+                                <option value="South Knot City">South Knot City</option>
+                                <option value="Edge Knot City">Edge Knot City</option>
+                                <option value="Lake Knot City">Lake Knot City</option>
                             </select>
                         </div>
                     </div>
@@ -82,9 +106,14 @@ function NewOrderForm() {
                                     onChange={handleDestinationChange}>
                                 <option value="" selected="selected" disabled="disabled">From city:
                                 </option>
-                                <option value="front-end">Capital Knot City</option>
-                                <option value="back-end">South Knot City</option>
-                                <option value="full-stack">West Knot City</option>
+                                <option value="Capital Knot City">Capital Knot City</option>
+                                <option value="Central Knot City">Central Knot City</option>
+                                <option value="Middle Knot City">Middle Knot City</option>
+                                <option value="Mountain Knot City">Mountain Knot City</option>
+                                <option value="Port Knot City">Port Knot City</option>
+                                <option value="South Knot City">South Knot City</option>
+                                <option value="Edge Knot City">Edge Knot City</option>
+                                <option value="Lake Knot City">Lake Knot City</option>
                                 {/*    {getCities}*/}
                             </select>
                         </div>
@@ -105,7 +134,7 @@ function NewOrderForm() {
                     <ul>
                         {stateGoods.map(
                             good => (
-                                <li key={good.id}>{good.id}</li>
+                                <GoodFormListElement id={good.id} updateFunction={updateGoodList} />
                             )
                         )}
                     </ul>

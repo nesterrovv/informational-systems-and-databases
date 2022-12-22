@@ -17,6 +17,15 @@ export const goodReducer = (state = defaultState, action) => {
             }
             newGoods.push(good);
             return {...state, goods: newGoods, nextId: state.nextId + 1};
+        case "DELETE_GOOD": {
+            let reducedGoods = state.goods.filter(good => good.id !== action.payload);
+            return {...state, goods: reducedGoods};
+        }
+        case "UPDATE_GOOD": {
+            let reducedGoods = state.goods.filter(good => good.id !== action.payload.id);
+            reducedGoods.push(action.payload);
+            return {...state, goods: reducedGoods};
+        }
         default:
             return state;
     }
