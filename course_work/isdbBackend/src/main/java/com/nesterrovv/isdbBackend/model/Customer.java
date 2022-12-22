@@ -7,7 +7,6 @@ import org.hibernate.annotations.GenericGenerator;
 import javax.persistence.*;
 
 @Accessors(chain = true)
-@Entity
 @Data
 @Table(name = "customer")
 public class Customer {
@@ -18,10 +17,12 @@ public class Customer {
     @GeneratedValue(generator = "generator")
     Integer customer_id;
     @Column
-    String login;
-    @Column
     String name;
     @Column
     String surname;
+    @Column
+    String username;
+    @Column
+    String password;
 
 }

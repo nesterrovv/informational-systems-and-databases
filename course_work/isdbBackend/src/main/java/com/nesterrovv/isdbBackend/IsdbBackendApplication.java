@@ -21,7 +21,7 @@ import java.util.Properties;
 @RestController
 public class IsdbBackendApplication {
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ClassNotFoundException {
 		SpringApplication.run(IsdbBackendApplication.class, args);
 	}
 
@@ -37,11 +37,11 @@ public class IsdbBackendApplication {
 		dataSource.setUsername(authorizationProperties.getProperty("database_login"));
 		dataSource.setPassword(authorizationProperties.getProperty("database_password"));
 		//schema init
-		Resource initSchema = new ClassPathResource("sql_scripts/create_scripts.sql");
-		Resource initTriggers = new ClassPathResource("sql_scripts/triggers.sql");
-		Resource initData = new ClassPathResource("sql_scripts/insert_scripts.sql");
-		DatabasePopulator databasePopulator = new ResourceDatabasePopulator(initSchema, initTriggers, initData);
-		DatabasePopulatorUtils.execute(databasePopulator, dataSource);
+		//Resource initSchema = new ClassPathResource("sql_scripts/create_scripts.sql");
+		//Resource initTriggers = new ClassPathResource("sql_scripts/triggers.sql");
+		//Resource initData = new ClassPathResource("sql_scripts/insert_scripts.sql");
+		//DatabasePopulator databasePopulator = new ResourceDatabasePopulator(initSchema, initTriggers, initData);
+		//DatabasePopulatorUtils.execute(databasePopulator, dataSource);
 		return dataSource;
 	}
 

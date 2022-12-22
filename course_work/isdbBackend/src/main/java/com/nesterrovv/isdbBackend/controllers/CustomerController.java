@@ -3,6 +3,7 @@ package com.nesterrovv.isdbBackend.controllers;
 import com.nesterrovv.isdbBackend.config.jwt.JWTProvider;
 import com.nesterrovv.isdbBackend.dto.CourierDTO;
 import com.nesterrovv.isdbBackend.dto.CustomerDTO;
+import com.nesterrovv.isdbBackend.dto.GoodDTO;
 import com.nesterrovv.isdbBackend.model.Good;
 import com.nesterrovv.isdbBackend.model.GoodStatus;
 import com.nesterrovv.isdbBackend.services.CustomerService;
@@ -40,11 +41,11 @@ public class CustomerController {
 
     @CrossOrigin
     @PostMapping("/get-list-of-my-orders")
-    private ResponseEntity<List<Good>> getListOfOrders(@Valid @RequestBody CustomerDTO customerDTO, DTO goodDTO) {
+    private ResponseEntity<List<Good>> getListOfOrders(@Valid @RequestBody CustomerDTO customerDTO, GoodDTO goodDTO) {
         List<Good> goods = goodService.findAll();
         List<Good> necessaryGoods = new ArrayList<>();
         for (Good good : goods) {
-            if (good.get) {
+            if (good.getCourier_id().equals(goodDTO.getCourier_id())) {
                 necessaryGoods.add(good);
             }
         }
