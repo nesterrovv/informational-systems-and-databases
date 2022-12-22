@@ -30,7 +30,6 @@ class CustomerPage extends React.Component {
 
     displayOrderList = () =>  {
         this.setState({mode: DisplayMode.OrderList});
-        console.log(this.state);
     }
 
     displayNewOrderForm = () => {

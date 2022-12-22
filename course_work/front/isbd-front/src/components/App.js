@@ -1,6 +1,8 @@
 import React, {Component} from "react";
 import CustomerPage from "./customer/CustomerPage";
 import EntryPage from "./common/EntryPage";
+import CourierOrderList from "./courier/CourierOrderList";
+import CourierPage from "./courier/CourierPage";
 require("halfmoon/css/halfmoon-variables.min.css");
 // Import JS library
 const halfmoon = require("halfmoon");
@@ -22,7 +24,8 @@ class App extends Component {
             //  </React.Fragment>
             <React.Fragment>
                 {/*<CustomerPage/>*/}
-                <EntryPage/>
+                {/*<EntryPage/>*/}
+                <CourierPage/>
             </React.Fragment>
         );
     }
