@@ -1,7 +1,4 @@
 import React, {Component} from "react";
-import CustomerGood from "./customer/CustomerGood";
-import CustomerOrder from "./customer/CustomerOrder";
-import CourierOrder from "./courier/CourierOrder";
 import CustomerPage from "./customer/CustomerPage";
 require("halfmoon/css/halfmoon-variables.min.css");
 // Import JS library

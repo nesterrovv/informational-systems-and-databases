@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import CustomerOrderList from "./CustomerOrderList";
 import CustomerNavbar from "./CustomerNavbar";
+import NewOrderForm from "./NewOrderForm";
 
 const DisplayMode = {
     NewOrder: 0,
@@ -10,7 +11,7 @@ const DisplayMode = {
 class CustomerPage extends React.Component {
     constructor(props) {
         super(props);
-        this.state = {mode: DisplayMode.OrderList};
+        this.state = {mode: DisplayMode.NewOrder};
     }
 
     getPageContent() {
@@ -19,7 +20,7 @@ class CustomerPage extends React.Component {
                 return <CustomerOrderList/>;
             }
             case (DisplayMode.NewOrder): {
-                return <div> There will be form</div>;
+                return <NewOrderForm/>;
             }
             default:
                 return <CustomerOrderList/>;
