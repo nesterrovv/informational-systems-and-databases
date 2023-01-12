@@ -32,6 +32,7 @@ public class CustomerDao {
                 .addValue("id", id);
         return template.queryForObject(sql, parameterSource, (rs, rowNum) -> {
             Customer customer = new Customer();
+            customer.setCustomer_id(rs.getInt("customer_id"));
             customer.setName(rs.getString("name"));
             customer.setSurname(rs.getString("surname"));
             customer.setLogin(rs.getString("login"));

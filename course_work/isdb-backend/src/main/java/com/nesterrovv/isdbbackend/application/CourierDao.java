@@ -34,6 +34,7 @@ public class CourierDao {
                 .addValue("id", id);
         return template.queryForObject(sql, parameterSource, (rs, rowNum) -> {
             Courier courier = new Courier();
+            courier.setCourier_id(rs.getInt("courier_id"));
             courier.setName(rs.getString("name"));
             courier.setSurname(rs.getString("surname"));
             courier.setRating(rs.getDouble("rating"));
