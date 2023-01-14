@@ -40,4 +40,9 @@ public class OrderController {
         return dao.findAll();
     }
 
+    @GetMapping(value = "/get-all-orders-by-customer")
+    public List<Ordering> getAllOrders(@RequestParam int id) {
+        return dao.findAllByCustomer(id);
+    }
+
 }

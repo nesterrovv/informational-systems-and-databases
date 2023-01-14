@@ -83,4 +83,17 @@ public class OrderDao {
                         rs.getString("description")));
         return orders;
     }
+
+    public List<Ordering> findAllByCustomer(int customerId) {
+        List<Ordering> orders = template.query(
+                "SELECT * FROM ordering WHERE customer_id = " + customerId,
+                (rs, rowNum) -> new Ordering(
+                        rs.getInt("id"),
+                        rs.getInt("customer_id"),
+                        rs.getInt("departure_point_id"),
+                        rs.getInt("destination_point_id"),
+                        OrderStatus.valueOf(rs.getString("status")),
+                        rs.getString("description")));
+        return orders;
+    }
 }
