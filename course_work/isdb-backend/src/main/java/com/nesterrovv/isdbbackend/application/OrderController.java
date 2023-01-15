@@ -42,13 +42,23 @@ public class OrderController {
     }
 
     @GetMapping(value = "/get-all-orders-by-customer")
-    public List<Ordering> getAllOrders(@RequestParam int id) {
-        return dao.findAllByCustomer(id);
+    public List<Ordering> getAllOrdersByCustomer(@RequestParam int id) {
+        return dao.getAllOrdersByCustomer(id);
+    }
+
+    @GetMapping(value = "/get-all-orders-for-view-by-customer")
+    public List<OrderDao.OrderDTO> getAllOrdersForViewByCustomer(@RequestParam int id) {
+        return dao.getAllOrdersByCustomerForView(id);
+    }
+
+    @GetMapping(value = "/get-order-for-view")
+    public OrderDao.OrderDTO getOrderByIdForView(@RequestParam int id) {
+        return dao.getOrderByIdForView(id);
     }
 
     @GetMapping(value = "/get-all-orders-for-view")
-    public OrderDao.OrderDTO getAllOrdersForView(@RequestParam int id) {
-        return dao.getOrderByIdForView(id);
+    public List<OrderDao.OrderDTO> getAlOrdersByIdForView() {
+        return dao.getAllOrdersForView();
     }
 
 }

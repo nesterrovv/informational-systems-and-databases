@@ -148,7 +148,24 @@ public class OrderDao {
         return orders;
     }
 
-    public List<Ordering> findAllByCustomer(int customerId) {
+    public List<OrderDTO> getAllOrdersForView() {
+        List<Ordering> orders = template.query(
+                "SELECT * FROM ordering",
+                (rs, rowNum) -> new Ordering(
+                        rs.getInt("order_id"),
+                        rs.getInt("customer_id"),
+                        rs.getInt("departure_point_id"),
+                        rs.getInt("destination_point_id"),
+                        OrderStatus.valueOf(rs.getString("status")),
+                        rs.getString("description")));
+        List<OrderDTO> ordersForView = new ArrayList<>();
+        for (Ordering order : orders) {
+            ordersForView.add(getOrderByIdForView(order.getOrder_id()));
+        }
+        return ordersForView;
+    }
+
+    public List<Ordering> getAllOrdersByCustomer(int customerId) {
         List<Ordering> orders = template.query(
                 "SELECT * FROM ordering WHERE customer_id = " + customerId,
                 (rs, rowNum) -> new Ordering(
@@ -160,4 +177,14 @@ public class OrderDao {
                         rs.getString("description")));
         return orders;
     }
+
+    public List<OrderDTO> getAllOrdersByCustomerForView(int customerId) {
+        List<Ordering> orders = getAllOrdersByCustomer(customerId);
+        List<OrderDTO> orderDTOs = new ArrayList<>();
+        for (Ordering order : orders) {
+            orderDTOs.add(getOrderByIdForView(order.getOrder_id()));
+        }
+        return orderDTOs;
+    }
+
 }
