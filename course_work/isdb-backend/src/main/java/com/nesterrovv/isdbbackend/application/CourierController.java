@@ -3,6 +3,7 @@ package com.nesterrovv.isdbbackend.application;
 import com.nesterrovv.isdbbackend.data.Courier;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = {"http://localhost:8080", "http://localhost:3000"})
 @RestController
 public class CourierController {
 
