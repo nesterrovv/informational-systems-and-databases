@@ -106,6 +106,7 @@ public class OrderDao {
                 good.setStatus(GoodStatus.valueOf(rs.getString("status")));
                 good.setDimensions(Dimensions.valueOf(rs.getString("dimensions")));
                 good.setRequest_id(rs.getInt("request_id"));
+                good.setDescription(rs.getString("description"));
                 return good;
             });
             goodsInOrder.add(current_good);

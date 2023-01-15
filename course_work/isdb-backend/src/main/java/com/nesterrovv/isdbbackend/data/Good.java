@@ -9,4 +9,5 @@ public class Good {
     private GoodStatus status;
     private Dimensions dimensions;
     private int request_id;
+    private String description;
 }
