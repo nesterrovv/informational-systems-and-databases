@@ -139,7 +139,7 @@ public class OrderDao {
         List<Ordering> orders = template.query(
                 "SELECT * FROM ordering",
                 (rs, rowNum) -> new Ordering(
-                        rs.getInt("id"),
+                        rs.getInt("order_id"),
                         rs.getInt("customer_id"),
                         rs.getInt("departure_point_id"),
                         rs.getInt("destination_point_id"),
@@ -152,7 +152,7 @@ public class OrderDao {
         List<Ordering> orders = template.query(
                 "SELECT * FROM ordering WHERE customer_id = " + customerId,
                 (rs, rowNum) -> new Ordering(
-                        rs.getInt("id"),
+                        rs.getInt("order_id"),
                         rs.getInt("customer_id"),
                         rs.getInt("departure_point_id"),
                         rs.getInt("destination_point_id"),
