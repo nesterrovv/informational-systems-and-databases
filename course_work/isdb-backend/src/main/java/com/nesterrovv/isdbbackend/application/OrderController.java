@@ -45,4 +45,9 @@ public class OrderController {
         return dao.findAllByCustomer(id);
     }
 
+    @GetMapping(value = "/get-all-orders-for-view")
+    public OrderDao.OrderDTO getAllOrdersForView(@RequestParam int id) {
+        return dao.getOrderByIdForView(id);
+    }
+
 }
