@@ -61,4 +61,14 @@ public class OrderController {
         return dao.getAllOrdersForView();
     }
 
+    @GetMapping(value = "/get-all-orders-by-courier")
+    public List<Ordering> getAllOrdersByCourier(@RequestParam int courierId) {
+        return dao.getAllOrdersByCourier(courierId);
+    }
+
+    @GetMapping(value = "/get-all-orders-for-view-by-courier")
+    public List<OrderDao.OrderDTO> getAllOrdersByCourierForView(@RequestParam int courierId) {
+        return dao.getAllOrdersByCourierForView(courierId);
+    }
+
 }

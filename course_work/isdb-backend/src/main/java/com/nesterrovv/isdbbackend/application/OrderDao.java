@@ -188,4 +188,28 @@ public class OrderDao {
         return orderDTOs;
     }
 
+    public List<Ordering> getAllOrdersByCourier(int courierId) {
+        List<Ordering> orders = template.query(
+                "SELECT * FROM ordering WHERE order_id = " +
+                        "(SELECT order_id FROM courier_order WHERE courier_id = " + courierId,
+                (rs, rowNum) -> new Ordering(
+                        rs.getInt("order_id"),
+                        rs.getInt("customer_id"),
+                        rs.getInt("departure_point_id"),
+                        rs.getInt("destination_point_id"),
+                        OrderStatus.valueOf(rs.getString("status")),
+                        rs.getString("description")));
+        return orders;
+    }
+
+    public List<OrderDTO> getAllOrdersByCourierForView(int courierId) {
+        List<Ordering> orders = getAllOrdersByCourier(courierId);
+        List<OrderDTO> orderDTOs = new ArrayList<>();
+        for (Ordering order : orders) {
+            orderDTOs.add(getOrderByIdForView(order.getOrder_id()));
+        }
+        return orderDTOs;
+    }
+
+
 }
