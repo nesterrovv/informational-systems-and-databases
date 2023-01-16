@@ -71,4 +71,9 @@ public class OrderController {
         return dao.getAllOrdersByCourierForView(courierId);
     }
 
+    @PostMapping(value = "/create-order-via-dto")
+    public Integer createOrderViaDTO(@RequestBody OrderDao.FrontendOrderDTO frontendOrderDTO) {
+        return dao.createOrderViaDTO(frontendOrderDTO);
+    }
+
 }

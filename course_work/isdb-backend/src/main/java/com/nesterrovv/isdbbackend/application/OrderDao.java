@@ -29,6 +29,33 @@ public class OrderDao {
         private List<Good> goods;
     }
 
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Data
+    class GoodDTO {
+        private GoodStatus status;
+        private double weight;
+        private double length;
+        private double width;
+        private double height;
+        private String description;
+    }
+
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Data
+    class FrontendOrderDTO {
+        private int customer_id;
+        private String departure_point;
+        private String description_point;
+        private OrderStatus status;
+        private String description;
+        private List<GoodDTO> goods;
+
+    }
+
+
+
     private final NamedParameterJdbcTemplate template;
 
     public OrderDao(NamedParameterJdbcTemplate template) {
@@ -211,5 +238,59 @@ public class OrderDao {
         return orderDTOs;
     }
 
+    public Integer createOrderViaDTO(FrontendOrderDTO frontendOrderDTO) {
+        String sql1 = "SELECT * FROM location WHERE name = :name";
+        SqlParameterSource parameterSource1 = new MapSqlParameterSource()
+                .addValue("name", frontendOrderDTO.getDeparture_point());
+        Location departure = template.queryForObject(sql1, parameterSource1, (rs, rowNum) -> {
+            Location location1 = new Location();
+            location1.setLocation_id(rs.getInt("location_id"));
+            location1.setName(rs.getString("name"));
+            return location1;
+        });
+        String sql2 = "SELECT * FROM location WHERE name = :name";
+        SqlParameterSource parameterSource2 = new MapSqlParameterSource()
+                .addValue("name", frontendOrderDTO.getDeparture_point());
+        Location destination = template.queryForObject(sql2, parameterSource2, (rs, rowNum) -> {
+            Location location1 = new Location();
+            location1.setLocation_id(rs.getInt("location_id"));
+            location1.setName(rs.getString("name"));
+            return location1;
+        });
+        String sql3 = "INSERT INTO ordering (customer_id, departure_point_id, destination_point_id, status, " +
+                "description) VALUES (:customer_id, :departure_point_id, :destination_point_id, :status, :description) " +
+                "RETURNING order_id";
+        SqlParameterSource parameterSource3 = new MapSqlParameterSource()
+                .addValue("customer_id", frontendOrderDTO.getCustomer_id())
+                .addValue("departure_point_id", departure.getLocation_id())
+                .addValue("destination_point_id", destination.getLocation_id())
+                .addValue("status", frontendOrderDTO.getStatus())
+                .addValue("description", frontendOrderDTO.getDescription());
+        Integer newOrderId = template.queryForObject(sql3, parameterSource3, Integer.class);
+        for (GoodDTO goodDTO : frontendOrderDTO.getGoods()) {
+            String sql4 = "INSERT INTO request (order_id, description, weight, length, width, height) VALUES " +
+                    "(:order_id, :description, :weight, :length, :width, :height) RETURNING request_id";
+            SqlParameterSource parameterSource4 = new MapSqlParameterSource()
+                    .addValue("order_id", newOrderId)
+                    .addValue("description", goodDTO.getDescription())
+                    .addValue("weight", goodDTO.getWeight())
+                    .addValue("length", goodDTO.getLength())
+                    .addValue("width", goodDTO.getWidth())
+                    .addValue("height", goodDTO.getHeight());
+            Integer newRequestId = template.queryForObject(sql4, parameterSource4, Integer.class);
+            // after this, good will be created automatically (via triggers in database)
+            String sql5 = "SELECT * FROM good WHERE request_id = :request_id";
+            SqlParameterSource parameterSource5 = new MapSqlParameterSource()
+                    .addValue("request_id", newRequestId);
+            Integer newGoodId = template.queryForObject(sql5, parameterSource5, Integer.class);
+            String sql6 = "INSERT INTO order_good (good_id, order_id) VALUES (:good_id, :order_id) RETURNING order_id";
+            SqlParameterSource parameterSource6 = new MapSqlParameterSource()
+                    .addValue("good_id", newGoodId)
+                    .addValue("order_id", newOrderId);
+            template.queryForObject(sql6, parameterSource6, Integer.class);
+        }
+        return newOrderId;
+
+    }
 
 }
