@@ -8,6 +8,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -290,7 +291,36 @@ public class OrderDao {
             template.queryForObject(sql6, parameterSource6, Integer.class);
         }
         return newOrderId;
+    }
 
+    public Integer updateOrderStatus(int courier_id, int order_id, OrderStatus newStatus) {
+        if (newStatus.equals(OrderStatus.DELIVERING)) {
+            String sql2 = "UPDATE courier_order SET courier_id = :courier_id WHERE order_id = :order_id";
+            SqlParameterSource parameterSource2 = new MapSqlParameterSource()
+                    .addValue("courier_id", courier_id)
+                    .addValue("order_id", order_id);
+            template.update(sql2, parameterSource2);
+        } else if (newStatus.equals(OrderStatus.DELIVERED) || newStatus.equals(OrderStatus.DESTROYED)) {
+            String sql3 = "DELETE FROM courier_order WHERE order_id = :order_id";
+            SqlParameterSource parameterSource3 = new MapSqlParameterSource()
+                    .addValue("order_id", order_id);
+            template.update(sql3, parameterSource3);
+        }
+        String sql1 = "UPDATE ordering SET status = :status WHERE order_id = :order_id";
+        SqlParameterSource parameterSource1 = new MapSqlParameterSource()
+                .addValue("status", newStatus)
+                .addValue("order_id", order_id);
+        template.update(sql1, parameterSource1);
+        return order_id;
+    }
+
+    public Integer updateGoodStatus(int good_id, GoodStatus newStatus) {
+        String sql1 = "UPDATE good SET status = :good_status WHERE good_id = :good_id";
+        SqlParameterSource parameterSource1 = new MapSqlParameterSource()
+                .addValue("good_status", newStatus)
+                .addValue("good_id", good_id);
+        template.update(sql1, parameterSource1);
+        return good_id;
     }
 
 }

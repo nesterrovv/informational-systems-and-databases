@@ -1,6 +1,8 @@
 package com.nesterrovv.isdbbackend.application;
 
 import com.nesterrovv.isdbbackend.data.Customer;
+import com.nesterrovv.isdbbackend.data.GoodStatus;
+import com.nesterrovv.isdbbackend.data.OrderStatus;
 import com.nesterrovv.isdbbackend.data.Ordering;
 import org.springframework.web.bind.annotation.*;
 
@@ -74,6 +76,18 @@ public class OrderController {
     @PostMapping(value = "/create-order-via-dto")
     public Integer createOrderViaDTO(@RequestBody OrderDao.FrontendOrderDTO frontendOrderDTO) {
         return dao.createOrderViaDTO(frontendOrderDTO);
+    }
+
+
+    @PutMapping(value = "/update-order-status")
+    public Integer updateOrderStatus(@RequestParam int courier_id, @RequestParam int order_id,
+                                     @RequestParam OrderStatus newStatus) {
+        return dao.updateOrderStatus(courier_id, order_id, newStatus);
+    }
+
+    @PutMapping(value = "/update-good-status")
+    public Integer updateGoodStatus(@RequestParam  int good_id, @RequestParam GoodStatus newStatus) {
+        return dao.updateGoodStatus(good_id, newStatus);
     }
 
 }
