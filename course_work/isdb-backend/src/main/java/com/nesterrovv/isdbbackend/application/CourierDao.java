@@ -5,11 +5,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Repository
 public class CourierDao {
 
     private final NamedParameterJdbcTemplate template;
+    private boolean courierIsLoggedIn;
 
     public CourierDao(NamedParameterJdbcTemplate template) {
             this.template = template;
@@ -64,4 +66,30 @@ public class CourierDao {
         template.update(sql, parameterSource);
     }
 
+    public String loginCourier(@RequestBody CourierDTO courierDTO) {
+        String sql1 = "SELECT * FROM courier WHERE login = :login and password = :password";
+        SqlParameterSource parameterSource1 = new MapSqlParameterSource()
+                .addValue("login", courierDTO.getLogin())
+                .addValue("password", courierDTO.getPassword());
+        CourierDTO load = template.queryForObject(sql1, parameterSource1, (rs, rowNum) -> {
+            CourierDTO courierDTO1 = new CourierDTO();
+            courierDTO1.setLogin(rs.getString("login"));
+            courierDTO1.setPassword(rs.getString("password"));
+            return courierDTO1;
+        });
+        if (courierDTO.getLogin().equals(load.getLogin()) &&
+                courierDTO.getPassword().equals(load.getPassword())) {
+            courierIsLoggedIn = true;
+            return courierDTO.getLogin();
+        }
+        return null;
+    }
+
+    public void logoutCourier() {
+        courierIsLoggedIn = false;
+    }
+
+    public boolean checkIfLoggedIn() {
+        return courierIsLoggedIn;
+    }
 }

@@ -5,11 +5,13 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
+import org.springframework.web.bind.annotation.RequestBody;
 
 @Repository
 public class CustomerDao {
 
     private final NamedParameterJdbcTemplate template;
+    private boolean customerIsLoggedIn;
 
     public CustomerDao(NamedParameterJdbcTemplate template) {
         this.template = template;
@@ -56,5 +58,33 @@ public class CustomerDao {
                 .addValue("id", id);
         template.update(sql, parameterSource);
     }
+
+    public String loginCustomer(@RequestBody CustomerDTO customerDTO) {
+        String sql1 = "SELECT * FROM customer WHERE login = :login and password = :password";
+        SqlParameterSource parameterSource1 = new MapSqlParameterSource()
+                .addValue("login", customerDTO.getLogin())
+                .addValue("password", customerDTO.getPassword());
+        CustomerDTO load = template.queryForObject(sql1, parameterSource1, (rs, rowNum) -> {
+            CustomerDTO customerDTO1 = new CustomerDTO();
+            customerDTO1.setLogin(rs.getString("login"));
+            customerDTO1.setPassword(rs.getString("password"));
+            return customerDTO1;
+        });
+        if (customerDTO.getLogin().equals(load.getLogin()) &&
+                customerDTO.getPassword().equals(load.getPassword())) {
+            customerIsLoggedIn = true;
+            return customerDTO.getLogin();
+        }
+        return null;
+    }
+
+    public void logoutCustomer() {
+        customerIsLoggedIn = false;
+    }
+
+    public boolean checkIfLoggedIn() {
+        return customerIsLoggedIn;
+    }
+
 
 }

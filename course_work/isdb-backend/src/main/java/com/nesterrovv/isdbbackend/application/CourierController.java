@@ -33,4 +33,14 @@ public class CourierController {
         dao.deleteCourier(id);
     }
 
+    @GetMapping(value = "/login-courier")
+    public String loginCourier(@RequestBody CourierDTO courierDTO) {
+        return dao.loginCourier(courierDTO);
+    }
+
+    @GetMapping(value = "/logout-courier")
+    public void logoutCourier() {
+        dao.logoutCourier();
+    }
+
 }
