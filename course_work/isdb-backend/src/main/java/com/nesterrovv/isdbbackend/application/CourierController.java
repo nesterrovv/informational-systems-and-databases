@@ -33,7 +33,7 @@ public class CourierController {
         dao.deleteCourier(id);
     }
 
-    @GetMapping(value = "/login-courier")
+    @PostMapping(value = "/login-courier")
     public String loginCourier(@RequestBody CourierDTO courierDTO) {
         return dao.loginCourier(courierDTO);
     }

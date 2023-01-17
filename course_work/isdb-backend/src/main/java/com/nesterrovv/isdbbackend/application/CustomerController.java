@@ -33,7 +33,7 @@ public class CustomerController {
         dao.deleteCourier(id);
     }
 
-    @GetMapping(value = "/login-customer")
+    @PostMapping(value = "/login-customer")
     public String loginCustomer(@RequestBody CustomerDTO customerDTO) {
         return dao.loginCustomer(customerDTO);
     }
