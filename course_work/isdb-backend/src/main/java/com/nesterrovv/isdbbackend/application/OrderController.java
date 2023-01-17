@@ -74,7 +74,7 @@ public class OrderController {
     }
 
     @PostMapping(value = "/create-order-via-dto")
-    public Integer createOrderViaDTO(@RequestBody OrderDao.FrontendOrderDTO frontendOrderDTO) {
+    public Integer createOrderViaDTO(@RequestBody FrontendOrderDTO frontendOrderDTO) {
         return dao.createOrderViaDTO(frontendOrderDTO);
     }
 

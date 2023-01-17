@@ -30,30 +30,30 @@ public class OrderDao {
         private List<Good> goods;
     }
 
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Data
-    class GoodDTO {
-        private GoodStatus status;
-        private double weight;
-        private double length;
-        private double width;
-        private double height;
-        private String description;
-    }
+//    @NoArgsConstructor
+//    @AllArgsConstructor
+//    @Data
+//    class GoodDTO {
+//        private GoodStatus status;
+//        private double weight;
+//        private double length;
+//        private double width;
+//        private double height;
+//        private String description;
+//    }
 
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Data
-    class FrontendOrderDTO {
-        private int customer_id;
-        private String departure_point;
-        private String description_point;
-        private OrderStatus status;
-        private String description;
-        private List<GoodDTO> goods;
-
-    }
+//    @NoArgsConstructor
+//    @AllArgsConstructor
+//    @Data
+//    class FrontendOrderDTO {
+//        private int customer_id;
+//        private String departure_point;
+//        private String description_point;
+//        private OrderStatus status;
+//        private String description;
+//        private List<GoodDTO> goods;
+//
+//    }
 
 
 
@@ -259,13 +259,13 @@ public class OrderDao {
             return location1;
         });
         String sql3 = "INSERT INTO ordering (customer_id, departure_point_id, destination_point_id, status, " +
-                "description) VALUES (:customer_id, :departure_point_id, :destination_point_id, :status, :description) " +
+                "description) VALUES (:customer_id, :departure_point_id, :destination_point_id, :status::order_status, :description) " +
                 "RETURNING order_id";
         SqlParameterSource parameterSource3 = new MapSqlParameterSource()
                 .addValue("customer_id", frontendOrderDTO.getCustomer_id())
                 .addValue("departure_point_id", departure.getLocation_id())
                 .addValue("destination_point_id", destination.getLocation_id())
-                .addValue("status", frontendOrderDTO.getStatus())
+                .addValue("status", frontendOrderDTO.getStatus().toString())
                 .addValue("description", frontendOrderDTO.getDescription());
         Integer newOrderId = template.queryForObject(sql3, parameterSource3, Integer.class);
         for (GoodDTO goodDTO : frontendOrderDTO.getGoods()) {
@@ -283,7 +283,12 @@ public class OrderDao {
             String sql5 = "SELECT * FROM good WHERE request_id = :request_id";
             SqlParameterSource parameterSource5 = new MapSqlParameterSource()
                     .addValue("request_id", newRequestId);
-            Integer newGoodId = template.queryForObject(sql5, parameterSource5, Integer.class);
+            Good ng = template.queryForObject(sql5, parameterSource5, (rs, rowNum) -> {
+                Good good = new Good();
+                good.setGood_id(rs.getInt("good_id"));
+                return good;
+            });
+            Integer newGoodId = ng.getGood_id();
             String sql6 = "INSERT INTO order_good (good_id, order_id) VALUES (:good_id, :order_id) RETURNING order_id";
             SqlParameterSource parameterSource6 = new MapSqlParameterSource()
                     .addValue("good_id", newGoodId)
@@ -306,18 +311,18 @@ public class OrderDao {
                     .addValue("order_id", order_id);
             template.update(sql3, parameterSource3);
         }
-        String sql1 = "UPDATE ordering SET status = :status WHERE order_id = :order_id";
+        String sql1 = "UPDATE ordering SET status = :status::order_status WHERE order_id = :order_id";
         SqlParameterSource parameterSource1 = new MapSqlParameterSource()
-                .addValue("status", newStatus)
+                .addValue("status", newStatus.toString())
                 .addValue("order_id", order_id);
         template.update(sql1, parameterSource1);
         return order_id;
     }
 
     public Integer updateGoodStatus(int good_id, GoodStatus newStatus) {
-        String sql1 = "UPDATE good SET status = :good_status WHERE good_id = :good_id";
+        String sql1 = "UPDATE good SET status = :good_status::good_status WHERE good_id = :good_id";
         SqlParameterSource parameterSource1 = new MapSqlParameterSource()
-                .addValue("good_status", newStatus)
+                .addValue("good_status", newStatus.toString())
                 .addValue("good_id", good_id);
         template.update(sql1, parameterSource1);
         return good_id;
