@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {useDispatch, useSelector} from "react-redux";
 import GoodFormListElement from "./GoodFormListElement";
+import axios from "axios";
 
 function NewOrderForm() {
 
@@ -19,23 +20,15 @@ function NewOrderForm() {
         setDeparture(event.target.value);
     }
     const handleDestinationChange = event => {
-        // this.setState({
-        //     destination: event.target.value
-        // })
         setDestination(event.target.value);
     }
     const handleDescriptionChange = event => {
-        // this.setState({
-        //     description: event.target.value
-        // })
         setDescription(event.target.value);
     }
 
     const handleAddGood = (event) => {
         dispatch({type: "ADD_GOOD"});
-        console.log("goods", goods);
         setGoods([...goods]);
-        console.log("stateGoods", stateGoods);
     }
 
     const updateGoodList = (event) => {
@@ -43,28 +36,75 @@ function NewOrderForm() {
     }
 
     const handleSubmit = event => {
+        if (goods.length == 0) {
+            alert("Add goods to the order!")
+            event.preventDefault()
+            return
+        }
         let order = {
-            departure: departure,
-            destination: destination,
+            //TODO: store customer_id as global variable
+            customer_id: 9,
+            status: "WAITING",
+            departure_point: departure,
+            destination_point: destination,
             description: description,
             goods: []
         }
-        goods.forEach(good => {
+
+        let isValidationSuccess = goods.every(good => {
+            if (!validateDecimal(good.length)) {
+                alert("Length must be positive number!")
+                return false
+            }
+            if (!validateDecimal(good.width)) {
+                alert("Width must be positive number!")
+                return false
+            }
+            if (!validateDecimal(good.height)) {
+                alert("Height must be positive number!")
+                return false
+            }
+            if (!validateDecimal(good.weight)) {
+                alert("Weight must be positive number!")
+                return false
+            }
+
             order.goods.push({
+                status: "WAITING",
                 length: good.length,
                 width: good.width,
                 height: good.height,
                 weight: good.weight,
                 description: good.description
             })
+
+            return true
         })
-        console.log("Order: ", order);
+
+        if (isValidationSuccess) {
+            console.log("Order: ", order);
+            axios.post("http://localhost:8080/create-order-via-dto", order)
+                .then((res) => {
+                        console.log(res);
+                        alert("Order created successfully!");
+                    }
+                )
+                .catch(err => {
+                    alert(err);
+                    console.log(err);
+                })
+        }
         event.preventDefault();
+    }
+
+    function validateDecimal(value) {
+        return (value - 0) == value && ('' + value).trim().length > 0 && value > 0
+
     }
 
     const renderGoods = () => {
         console.log("renderGoods: ", goods);
-        const goodsRenderList =  stateGoods.map(
+        const goodsRenderList = stateGoods.map(
             good => (
                 <div>{good.id}</div>
             )
@@ -121,10 +161,11 @@ function NewOrderForm() {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="description">Description</label>
+                    <label htmlFor="description" className="required">Description</label>
                     <textarea className="form-control" id="description"
                               placeholder="Write a short description about your order"
                               value={description}
+                              required="required"
                               onChange={handleDescriptionChange}>
                         </textarea>
                 </div>
@@ -134,7 +175,7 @@ function NewOrderForm() {
                     <ul>
                         {stateGoods.map(
                             good => (
-                                <GoodFormListElement id={good.id} updateFunction={updateGoodList} />
+                                <GoodFormListElement id={good.id} updateFunction={updateGoodList}/>
                             )
                         )}
                     </ul>

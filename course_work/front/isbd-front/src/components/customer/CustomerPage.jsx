@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React from 'react';
 import CustomerOrderList from "./CustomerOrderList";
 import CustomerNavbar from "./CustomerNavbar";
 import NewOrderForm from "./NewOrderForm";

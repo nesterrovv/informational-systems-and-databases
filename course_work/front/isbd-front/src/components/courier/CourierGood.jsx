@@ -14,7 +14,7 @@ const CourierGood = props => {
                         <StatusLabel status={props.good_status}></StatusLabel>
                     </div>
                     <div className="align-self-start">
-                        <StatusButtons status={props.good_status}/>
+                        <StatusButtons status={props.good_status} mode="good"/>
                     </div>
                 </div>
             </div>
