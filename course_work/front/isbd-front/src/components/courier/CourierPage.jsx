@@ -1,16 +1,15 @@
-import React, {Component} from 'react';
+import React from 'react';
 import CourierNavbar from "./CourierNavbar";
-import CustomerOrderList from "../customer/CustomerOrderList";
-import NewOrderForm from "../customer/NewOrderForm";
 import CourierOrderList from "./CourierOrderList";
 import CourierAssignedOrdersList from "./CourierAssignedOrdersList";
+import CourierAvailableOrderTable from "./CourierAvailableOrderTable";
 
 const DisplayMode = {
     OrderList: 0,
     AssignedOrderList: 1
 }
 
-class CourierPage extends Component {
+class CourierPage extends React.Component {
     constructor(props) {
         super(props);
         this.state = {mode: DisplayMode.OrderList};
@@ -27,7 +26,7 @@ class CourierPage extends Component {
     getPageContent() {
         switch (this.state.mode) {
             case (DisplayMode.OrderList): {
-                return <CourierOrderList/>;
+                return <CourierAvailableOrderTable/>;
             }
 
             case (DisplayMode.AssignedOrderList): {
@@ -44,6 +43,7 @@ class CourierPage extends Component {
         return (
             <div className="with-custom-webkit-scrollbars">
                 <div className="page-wrapper with-navbar with-sidebar">
+                    <div className="sticky-alerts"/>
 
                     <nav className="navbar">
                         <CourierNavbar name="Egor Courier"/>
@@ -61,7 +61,6 @@ class CourierPage extends Component {
                     <div className="content-wrapper">
                         {this.getPageContent()}
                     </div>
-
                 </div>
             </div>
         );

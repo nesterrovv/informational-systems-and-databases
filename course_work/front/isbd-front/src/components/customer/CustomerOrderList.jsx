@@ -1,26 +1,42 @@
 import React, {Component} from 'react';
 import CustomerOrder from "./CustomerOrder";
+import axios from "axios";
 
 class CustomerOrderList extends React.Component {
 
+    constructor(props) {
+        super(props);
+        this.state={
+            orders:[]
+        }
+    }
     componentDidMount() {
-        //TODO: get from server list of orders
+        //TODO: get id from globally stored value
+        axios.get('http://localhost:8080/get-all-orders-for-view-by-customer', {params: {id: 1}})
+            .then(res => {
+                console.log(res.data)
+                this.setState({
+                    orders: res.data
+                })
+            })
+            .catch(err => {
+                console.log(err)
+            })
     }
 
     render() {
         return (
             <div>
-                <CustomerOrder order_status={'WAITING'} departure="Capital Knot City"
-                               destination="South Knot City"
-                               description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. "/>
-                <CustomerOrder order_status={'LOST'} departure="Capital Knot City" destination="South Knot City"
-                               description="Lorem ipsum dolor sit amet, consectetur adipiscing elit. "/>
-                <CustomerOrder order_status={'DESTROYED'} departure="Capital Knot City"
-                               destination="South Knot City" description=""/>
-                <CustomerOrder order_status={'DELIVERING'} departure="Capital Knot City"
-                               destination="South Knot City" description=""/>
-                <CustomerOrder order_status={'DELIVERED'} departure="Capital Knot City"
-                               destination="South Knot City" description=""/>
+                {this.state.orders.map(
+                    order => (
+                        //TODO: set departure & description names, not id
+                        //TODO:
+                        <CustomerOrder order_status={order.status} departure={order.departure_point}
+                                       destination={order.destination_point}
+                                       goods={order.goods}
+                                       description={order.description}></CustomerOrder>
+                    )
+                )}
             </div>
         );
     }

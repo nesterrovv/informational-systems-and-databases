@@ -6,10 +6,10 @@ const GoodFormListElement = (props) => {
     const dispatch = useDispatch();
     const goods = useSelector(state => state.goods.goods);
 
-    const [length, setLength] = useState(0);
-    const [width, setWidth] = useState(0);
-    const [height, setHeight] = useState(0);
-    const [weight, setWeight] = useState(0);
+    const [length, setLength] = useState(undefined);
+    const [width, setWidth] = useState(undefined);
+    const [height, setHeight] = useState(undefined);
+    const [weight, setWeight] = useState(undefined);
     const [description, setDescription] = useState('');
 
     useEffect(() => {
@@ -99,10 +99,11 @@ const GoodFormListElement = (props) => {
                         </div>
                     </div>
                     <div className="form-group">
-                        <label htmlFor="description">Description</label>
+                        <label className="required" htmlFor="description">Description</label>
                         <textarea className="form-control" id="description"
                                   placeholder="Write a short description about your order"
                                   value={description}
+                                  required="required"
                                   onChange={handleDescriptionChange}>
                         </textarea>
                     </div>

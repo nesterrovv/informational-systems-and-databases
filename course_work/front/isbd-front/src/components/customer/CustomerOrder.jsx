@@ -29,9 +29,15 @@ const CustomerOrder = props => {
                             Order content
                         </summary>
                         <div className="collapse-content">
-                            <CustomerGood good_status={'WAITING'} description={'Hello'}></CustomerGood>
-                            <CustomerGood good_status={'DELIVERED'} description={'Hell yeah'}></CustomerGood>
-                            <CustomerGood good_status={'LOST'} description={'Blyat'}></CustomerGood>
+                            {props.goods.map(
+                                good => (
+                                    <CustomerGood good_status={good.status} description={good.description} dimensions={good.dimensions}></CustomerGood>
+                                )
+                            )
+                            }
+                            {/*<CustomerGood good_status={'WAITING'} description={'Hello'}></CustomerGood>*/}
+                            {/*<CustomerGood good_status={'DELIVERED'} description={'Hell yeah'}></CustomerGood>*/}
+                            {/*<CustomerGood good_status={'LOST'} description={'Blyat'}></CustomerGood>*/}
                         </div>
                     </details>
                 </div>

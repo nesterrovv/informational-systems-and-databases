@@ -29,7 +29,7 @@ const CourierOrder = props => {
                     </div>
 
                     <div className="align-self-start">
-                        <StatusButtons status={props.order_status}/>
+                        <StatusButtons status={props.order_status} order_id={props.order_id} mode="order"/>
                     </div>
                 </div>
                 <div>
