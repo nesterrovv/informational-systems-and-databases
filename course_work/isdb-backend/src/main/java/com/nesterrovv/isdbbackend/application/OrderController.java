@@ -1,6 +1,5 @@
 package com.nesterrovv.isdbbackend.application;
 
-import com.nesterrovv.isdbbackend.data.Customer;
 import com.nesterrovv.isdbbackend.data.GoodStatus;
 import com.nesterrovv.isdbbackend.data.OrderStatus;
 import com.nesterrovv.isdbbackend.data.Ordering;
@@ -49,17 +48,17 @@ public class OrderController {
     }
 
     @GetMapping(value = "/get-all-orders-for-view-by-customer")
-    public List<OrderDao.OrderDTO> getAllOrdersForViewByCustomer(@RequestParam int id) {
+    public List<OrderDTO> getAllOrdersForViewByCustomer(@RequestParam int id) {
         return dao.getAllOrdersByCustomerForView(id);
     }
 
     @GetMapping(value = "/get-order-for-view")
-    public OrderDao.OrderDTO getOrderByIdForView(@RequestParam int id) {
+    public OrderDTO getOrderByIdForView(@RequestParam int id) {
         return dao.getOrderByIdForView(id);
     }
 
     @GetMapping(value = "/get-all-orders-for-view")
-    public List<OrderDao.OrderDTO> getAlOrdersByIdForView() {
+    public List<OrderDTO> getAlOrdersByIdForView() {
         return dao.getAllOrdersForView();
     }
 
@@ -69,12 +68,12 @@ public class OrderController {
     }
 
     @GetMapping(value = "/get-all-orders-for-view-by-courier")
-    public List<OrderDao.OrderDTO> getAllOrdersByCourierForView(@RequestParam int courierId) {
+    public List<OrderDTO> getAllOrdersByCourierForView(@RequestParam int courierId) {
         return dao.getAllOrdersByCourierForView(courierId);
     }
 
     @PostMapping(value = "/create-order-via-dto")
-    public Integer createOrderViaDTO(@RequestBody OrderDao.FrontendOrderDTO frontendOrderDTO) {
+    public Integer createOrderViaDTO(@RequestBody FrontendOrderDTO frontendOrderDTO) {
         return dao.createOrderViaDTO(frontendOrderDTO);
     }
 

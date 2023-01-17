@@ -1,60 +1,16 @@
 package com.nesterrovv.isdbbackend.application;
 
 import com.nesterrovv.isdbbackend.data.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.namedparam.SqlParameterSource;
 import org.springframework.stereotype.Repository;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 @Repository
 public class OrderDao {
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Data
-    class OrderDTO {
-        private int order_id;
-        private int customer_id;
-        private String departure_point;
-        private String destination_point;
-        private OrderStatus status;
-        private String description;
-        private List<Good> goods;
-    }
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Data
-    class GoodDTO {
-        private GoodStatus status;
-        private double weight;
-        private double length;
-        private double width;
-        private double height;
-        private String description;
-    }
-
-    @NoArgsConstructor
-    @AllArgsConstructor
-    @Data
-    class FrontendOrderDTO {
-        private int customer_id;
-        private String departure_point;
-        private String description_point;
-        private OrderStatus status;
-        private String description;
-        private List<GoodDTO> goods;
-
-    }
-
 
 
     private final NamedParameterJdbcTemplate template;
@@ -265,8 +221,10 @@ public class OrderDao {
                 .addValue("customer_id", frontendOrderDTO.getCustomer_id())
                 .addValue("departure_point_id", departure.getLocation_id())
                 .addValue("destination_point_id", destination.getLocation_id())
+                //FIXME
                 .addValue("status", frontendOrderDTO.getStatus())
                 .addValue("description", frontendOrderDTO.getDescription());
+
         Integer newOrderId = template.queryForObject(sql3, parameterSource3, Integer.class);
         for (GoodDTO goodDTO : frontendOrderDTO.getGoods()) {
             String sql4 = "INSERT INTO request (order_id, description, weight, length, width, height) VALUES " +
